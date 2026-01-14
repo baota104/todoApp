@@ -11,4 +11,7 @@
     <color name="text_gray">#757575</color>
     <color name="bg_white">#FFFFFF</color>
     <color name="bg_input">#FFFFFF</color>
+    <color name="text_title">#1D1D1D</color>
+    <color name="card_red">#E53935</color>
+    <color name="bg_screen">#F9F9F9</color>
 </resources>

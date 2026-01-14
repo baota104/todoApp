@@ -20,7 +20,7 @@ data class Category(
     val categoryId: Int = 0,
 
     val name: String,         // VD: "Priority Task", "Daily Task"
-
+    val icon: Int,
     @ColumnInfo(name = "color_code")
     val colorCode: String? = null, // VD: "#FF5733"
 

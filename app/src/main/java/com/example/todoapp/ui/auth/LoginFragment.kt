@@ -53,7 +53,7 @@ class LoginFragment : Fragment() {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 
                 // Chuyển sang màn Home
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
             } else {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }

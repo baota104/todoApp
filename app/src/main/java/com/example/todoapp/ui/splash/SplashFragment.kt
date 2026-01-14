@@ -19,7 +19,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         Handler(Looper.getMainLooper()).postDelayed({
             if (isAdded) {
                 if (userPreferences.isLoggedIn()) {
-                    findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                    findNavController().navigate(R.id.action_splashFragment_to_dashBoardFragment)
                 } else {
                     findNavController().navigate(R.id.action_splashFragment_to_onboardingFragment)
                 }

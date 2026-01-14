@@ -31,12 +31,12 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.logout.setOnClickListener {
-            val prefs = UserPreferences(requireContext())
-            prefs.clearSession() // Xóa dữ liệu
-
-            // Quay về màn hình Login
-            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-        }
+//        binding.logout.setOnClickListener {
+//            val prefs = UserPreferences(requireContext())
+//            prefs.clearSession() // Xóa dữ liệu
+//
+//            // Quay về màn hình Login
+//            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+//        }
     }
 }
