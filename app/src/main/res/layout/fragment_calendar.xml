@@ -1,14 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.CalendarFragment">
+    android:background="@color/bg_screen"
+    android:padding="24dp">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/tvCurrentMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Feb, 2022"
+        android:textColor="@color/text_title"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAddTask" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/primary_blue"
+        android:text="+ Add Task"
+        android:textAllCaps="false"
+        android:gravity="center"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalendarStrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddTask"
+        tools:listitem="@layout/item_calendar_date" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tabContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvCalendarStrip">
+
+        <TextView
+            android:id="@+id/tvTabPriority"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            android:text="Priority Task"
+            android:textColor="@color/primary_blue"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvTabDaily"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/indicatorPriority"
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_tab_indicator"
+            app:layout_constraintEnd_toEndOf="@+id/tvTabPriority"
+            app:layout_constraintStart_toStartOf="@+id/tvTabPriority"
+            app:layout_constraintTop_toBottomOf="@+id/tvTabPriority" />
+
+
+        <TextView
+            android:id="@+id/tvTabDaily"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            android:text="Daily Task"
+            android:textColor="@color/text_gray"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvTabPriority"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/indicatorDaily"
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:visibility="invisible"
+            android:background="@drawable/bg_tab_indicator"
+            app:layout_constraintEnd_toEndOf="@+id/tvTabDaily"
+            app:layout_constraintStart_toStartOf="@+id/tvTabDaily"
+            app:layout_constraintTop_toBottomOf="@+id/tvTabDaily" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTasks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabContainer"
+        tools:listitem="@layout/item_calendar_priority_task" />
+</androidx.constraintlayout.widget.ConstraintLayout>

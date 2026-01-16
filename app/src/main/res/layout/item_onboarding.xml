@@ -40,20 +40,22 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintVertical_bias="1.0">
 
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:lineSpacingExtra="4dp"
             android:text="Description text goes here..."
             android:textColor="#757575"
-            android:textSize="16sp"
-            android:lineSpacingExtra="4dp" />
+            android:textSize="16sp" />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

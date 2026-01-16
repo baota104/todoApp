@@ -1,6 +1,8 @@
 package com.example.todoapp.ui.auth
 
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +21,14 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    // KHỞI TẠO VIEWMODEL
     private val loginViewModel: LoginViewModel by viewModels {
-        val database = AppDatabase.getDatabase(requireContext())
+        val context = requireContext()
+        val database = AppDatabase.getDatabase(context)
         val repository = UserRepository(database.userDao())
-        LoginViewModel.LoginViewModelFactory(repository)
+
+        val userPreferences = UserPreferences(context)
+
+        LoginViewModel.LoginViewModelFactory(repository, userPreferences)
     }
 
     override fun onCreateView(
@@ -38,21 +43,12 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userPreferences = UserPreferences(requireContext())
-
-        // Quan sát kết quả trả về (Pair<Boolean, String>)
         loginViewModel.loginResult.observe(viewLifecycleOwner) { result ->
             val isSuccess = result.first
             val message = result.second
 
             if (isSuccess) {
-                // LOGIC MỚI: Vì đăng nhập thành công, ta lấy luôn email từ ô nhập liệu để lưu
-                val emailInput = binding.etEmail.text.toString()
-                userPreferences.saveUserSession(emailInput)
-
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-
-                // Chuyển sang màn Home
                 findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
             } else {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -74,9 +70,25 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
-        // 4. Các nút phụ (chưa có chức năng)
         binding.layoutSocial.setOnClickListener {
             showToast("Tính năng Social Login đang phát triển!")
+        }
+
+        var isPasswordVisible = false
+
+        binding.btnTogglePassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+
+            if (isPasswordVisible) {
+                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding.btnTogglePassword.setColorFilter(R.color.white)
+            } else {
+                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.btnTogglePassword.setImageResource(R.drawable.ic_eye_off)
+            }
+
+
+            binding.etPassword.setSelection(binding.etPassword.text.length)
         }
     }
 

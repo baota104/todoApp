@@ -3,9 +3,13 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
+import androidx.room.Index
 
 @Entity(
     tableName = "categories",
+    indices = [
+        Index(value = ["name", "user_id"], unique = true)
+    ],
     foreignKeys = [
         ForeignKey(
             entity = User::class,
@@ -22,7 +26,7 @@ data class Category(
     val name: String,         // VD: "Priority Task", "Daily Task"
     val icon: Int,
     @ColumnInfo(name = "color_code")
-    val colorCode: String? = null, // VD: "#FF5733"
+    val colorCode: Int? = null, // VD: "#FF5733"
 
     @ColumnInfo(name = "user_id")
     val userId: Int // Khóa ngoại

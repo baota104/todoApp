@@ -1,7 +1,9 @@
 package com.example.todoapp.ui.onboarding
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
@@ -10,19 +12,28 @@ import com.example.todoapp.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
 import android.widget.TextView
+import com.example.todoapp.databinding.FragmentLoginBinding
+import com.example.todoapp.databinding.FragmentOnboardingBinding
 
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
-
+    private var _binding:FragmentOnboardingBinding? = null
+    private val  binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentOnboardingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Ánh xạ View (Bạn có thể dùng ViewBinding để gọn hơn)
-        val viewPager: ViewPager2 = view.findViewById(R.id.viewPager)
-        val btnNext: MaterialButton = view.findViewById(R.id.btnNext)
-        val tvSkip: TextView = view.findViewById(R.id.tvSkip)
-        val tabLayout: TabLayout = view.findViewById(R.id.tabLayout)
+        val viewPager: ViewPager2 = binding.viewPager
+        val btnNext: MaterialButton = binding.btnNext
+        val tvSkip: TextView = binding.tvSkip
+        val tabLayout: TabLayout = binding.tabLayout
 
-        // 2. Chuẩn bị dữ liệu (Lấy từ PDF)
         val items = listOf(
             OnboardingItem(
                 title = "Easy Time Management",
@@ -45,7 +56,6 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
 
-        // 5. Sự kiện nút Next / Get Started
         btnNext.setOnClickListener {
             if (viewPager.currentItem < items.size - 1) {
                 viewPager.currentItem += 1
@@ -54,12 +64,10 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
             }
         }
 
-        // 6. Sự kiện nút Skip
         tvSkip.setOnClickListener {
             navigateToLogin()
         }
 
-        // 7. Đổi chữ nút bấm ở trang cuối
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 if (position == items.size - 1) {

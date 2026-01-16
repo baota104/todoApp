@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    // Pair<Boolean, String>: Boolean là thành công hay không, String là thông báo lỗi/thành công
     private val _registrationResult = MutableLiveData<Pair<Boolean, String>>()
     val registrationResult: LiveData<Pair<Boolean, String>> get() = _registrationResult
 
@@ -22,7 +21,7 @@ class RegisterViewModel(private val userRepository: UserRepository) : ViewModel(
             Log.d("AuthDebug", "1. Bắt đầu đăng ký cho email: $email")
 
             try {
-                // Kiểm tra user tồn tại
+
                 val existingUser = userRepository.getUserByEmail(email)
                 Log.d("AuthDebug", "2. Kết quả kiểm tra user tồn tại: $existingUser")
 

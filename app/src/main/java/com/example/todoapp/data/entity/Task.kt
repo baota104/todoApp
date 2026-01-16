@@ -40,7 +40,7 @@ data class Task(
     val priority: Int = 1,       // 1: Thấp, 2: Cao
 
     @ColumnInfo(name = "is_completed")
-    val isCompleted: Boolean = false,
+    var isCompleted: Boolean = false,
 
     // Trường này khớp với thanh trượt trên giao diện Dashboard [cite: 42]
     @ColumnInfo(name = "progress_percent")

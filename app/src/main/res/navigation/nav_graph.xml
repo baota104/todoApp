@@ -63,6 +63,10 @@
         android:id="@+id/dashBoardFragment"
         android:name="com.example.todoapp.ui.home.DashBoardFragment"
         android:label="fragment_dash_board"
-        tools:layout="@layout/fragment_dash_board" />
+        tools:layout="@layout/fragment_dash_board" >
+        <action
+            android:id="@+id/action_dashBoardFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
 
 </navigation>
