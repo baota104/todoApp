@@ -29,6 +29,8 @@ class CategoryAdapter(
 
         fun bind(category: Category, isSelected: Boolean) {
             binding.tvName.text = category.name
+            binding.imgIcon.setImageResource(category.icon)
+//            binding.cardContainer.setBackgroundColor(category.colorCode!!.toInt())
             if (isSelected) {
                 binding.root.setCardBackgroundColor(Color.parseColor("#2196F3"))
                 binding.tvName.setTextColor(Color.WHITE)

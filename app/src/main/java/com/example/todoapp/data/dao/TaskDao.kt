@@ -2,6 +2,7 @@ package com.example.todoapp.data.dao
 
 import androidx.room.*
 import com.example.todoapp.data.entity.Task
+import com.example.todoapp.data.entity.TaskWithCategory
 import com.example.todoapp.data.entity.TaskWithSubTasks
 import kotlinx.coroutines.flow.Flow
 
@@ -28,4 +29,13 @@ interface TaskDao {
     // Tìm kiếm task theo tên
     @Query("SELECT * FROM tasks WHERE user_id = :userId AND title LIKE '%' || :query || '%'")
     fun searchTasks(userId: Int, query: String): Flow<List<Task>>
+
+    @Query("""
+        SELECT tasks.*, categories.icon AS category_icon, categories.color_code AS category_color
+        FROM tasks 
+        LEFT JOIN categories ON tasks.cat_id = categories.categoryId
+        WHERE tasks.user_id = :userId
+        ORDER BY tasks.created_at DESC
+    """)
+    fun getTasksWithCategory(userId: Int): Flow<List<TaskWithCategory>>
 }
