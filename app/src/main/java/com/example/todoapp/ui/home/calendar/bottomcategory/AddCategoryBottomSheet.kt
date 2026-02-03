@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.home.calendar
+package com.example.todoapp.ui.home.calendar.bottomcategory
 
 
 import android.graphics.Color
@@ -8,14 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.example.todoapp.R
 import com.example.todoapp.data.AppDatabase
 import com.example.todoapp.data.local.UserPreferences
 import com.example.todoapp.data.repository.CategoryRepository
 import com.example.todoapp.databinding.BottomSheetAddCategoryBinding
 import com.example.todoapp.ui.adapter.IconAdapter
-import com.example.todoapp.ui.viewmodel.CategoryViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class AddCategoryBottomSheet : BottomSheetDialogFragment() {
@@ -38,7 +36,7 @@ class AddCategoryBottomSheet : BottomSheetDialogFragment() {
         val db = AppDatabase.getDatabase(context)
         val repository = CategoryRepository(db.categoryDao())
         val userPrefs = UserPreferences(context)
-        CategoryViewModel.CategoryViewModelFactory(repository, userPrefs)
+        CategoryViewModel.CategoryViewModelFactory(repository, userPrefs.getUserId()!!)
     }
 
     override fun onCreateView(
@@ -72,9 +70,7 @@ class AddCategoryBottomSheet : BottomSheetDialogFragment() {
             val userId = userPrefs.getUserId()
 
             if (userId != -1) {
-
-                categoryViewModel.addCategory(name, selectedIconRes, colorCode, userId!!)
-
+                categoryViewModel.addCategory(name, selectedIconRes, colorCode)
                 Toast.makeText(context, "Category Added!", Toast.LENGTH_SHORT).show()
                 dismiss() // Đóng BottomSheet
             } else {

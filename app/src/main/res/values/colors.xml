@@ -14,4 +14,5 @@
     <color name="text_title">#1D1D1D</color>
     <color name="card_red">#E53935</color>
     <color name="bg_screen">#F9F9F9</color>
+    <color name="blue_date">#EBF2FF</color>
 </resources>

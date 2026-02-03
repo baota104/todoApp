@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
             entity = Task::class,
             parentColumns = ["taskId"],
             childColumns = ["task_id"],
-            onDelete = ForeignKey.CASCADE // Xóa Task cha -> Xóa hết việc con
+            onDelete = ForeignKey.CASCADE // xoa task -> xoa subtask
         )
     ],
     indices = [Index("task_id")]
@@ -22,11 +22,11 @@ data class SubTask(
     @PrimaryKey(autoGenerate = true)
     val subId: Int = 0,
 
-    val content: String, // Nội dung việc nhỏ
+    val content: String,
 
     @ColumnInfo(name = "is_done")
     val isDone: Boolean = false,
 
     @ColumnInfo(name = "task_id")
-    val taskId: Int // Khóa ngoại
+    val taskId: Int
 )

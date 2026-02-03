@@ -36,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "task_management_db"
                 )
-                    .fallbackToDestructiveMigration() // Dòng này QUAN TRỌNG: Cho phép xóa DB cũ đi làm lại nếu lệch version
+                    .fallbackToDestructiveMigration() //  Cho phép xóa DB cũ đi làm lại nếu lệch version
                     .build()
                 INSTANCE = instance
                 instance

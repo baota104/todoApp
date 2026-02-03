@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.auth
+package com.example.todoapp.ui.auth.login
 
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
@@ -40,21 +40,16 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    // tach code ra
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        setupObserve()
 
-        loginViewModel.loginResult.observe(viewLifecycleOwner) { result ->
-            val isSuccess = result.first
-            val message = result.second
+    }
 
-            if (isSuccess) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
-            } else {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
-        }
-
+    private fun setupUI(){
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
@@ -89,6 +84,27 @@ class LoginFragment : Fragment() {
 
 
             binding.etPassword.setSelection(binding.etPassword.text.length)
+        }
+    }
+    private fun setupObserve(){
+        loginViewModel.loginResult.observe(viewLifecycleOwner) { result ->
+            val isSuccess = result.first
+            val message = result.second
+
+            if (isSuccess) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                val navOptions = androidx.navigation.NavOptions.Builder()
+                    .setPopUpTo(R.id.loginFragment, true)
+                    .setEnterAnim(R.anim.slide_in_right)
+                    .setExitAnim(R.anim.slide_out_left)
+                    .build()
+                findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment,
+                    null,
+                    navOptions
+                    )
+            } else {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

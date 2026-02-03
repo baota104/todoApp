@@ -3,6 +3,8 @@ package com.example.todoapp.data.local
 import android.content.Context
 import android.content.SharedPreferences
 
+// chuyen thanh object
+
 class UserPreferences(context: Context) {
 
     private val sharedPreferences: SharedPreferences =
@@ -10,7 +12,13 @@ class UserPreferences(context: Context) {
 
     companion object {
         private const val KEY_USER_ID = "key_user_id"
+        private const val FIRST_TIME = "key_category"
         private const val KEY_IS_LOGGED_IN = "key_is_logged_in"
+    }
+    fun savecategoryfist(userid: Int){
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(FIRST_TIME,true)
+        editor.apply()
     }
 
     fun saveUserSession(userid: Int) {
@@ -26,6 +34,10 @@ class UserPreferences(context: Context) {
 
     fun isLoggedIn(): Boolean {
         return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
+    }
+
+    fun isInsertCate(): Boolean {
+        return sharedPreferences.getBoolean(FIRST_TIME, false)
     }
 
     fun clearSession() {

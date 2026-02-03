@@ -15,7 +15,7 @@ import androidx.room.Index
             entity = User::class,
             parentColumns = ["userId"],
             childColumns = ["user_id"],
-            onDelete = ForeignKey.CASCADE // Xóa User -> Xóa luôn Category của họ
+            onDelete = ForeignKey.CASCADE // xóa user -> xóa luôn Category
         )
     ]
 )
@@ -23,11 +23,11 @@ data class Category(
     @PrimaryKey(autoGenerate = true)
     val categoryId: Int = 0,
 
-    val name: String,         // VD: "Priority Task", "Daily Task"
+    val name: String,
     val icon: Int,
     @ColumnInfo(name = "color_code")
-    val colorCode: Int? = null, // VD: "#FF5733"
+    val colorCode: Int? = null,
 
     @ColumnInfo(name = "user_id")
-    val userId: Int // Khóa ngoại
+    val userId: Int
 )

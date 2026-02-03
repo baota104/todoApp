@@ -8,7 +8,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarAdapter(
-    private val onDateClick: (Date) -> Unit
+
+    private val onDateClick : (Date)->Unit
 ) : RecyclerView.Adapter<CalendarAdapter.DateViewHolder>() {
 
     private val dates = mutableListOf<Date>()

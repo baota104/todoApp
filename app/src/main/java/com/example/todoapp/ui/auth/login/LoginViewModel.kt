@@ -1,6 +1,5 @@
-package com.example.todoapp.ui.auth
+package com.example.todoapp.ui.auth.login
 
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,9 +13,9 @@ import kotlinx.coroutines.launch
 class LoginViewModel(private val userRepository: UserRepository,
                      private val userPreferences: UserPreferences
 ) : ViewModel() {
+        private val _loginResult = MutableLiveData<Pair<Boolean,String>>()
+        val loginResult: LiveData<Pair<Boolean, String>> get() = _loginResult
 
-    private val _loginResult = MutableLiveData<Pair<Boolean, String>>()
-    val loginResult: LiveData<Pair<Boolean, String>> get() = _loginResult
 
     fun login(email: String, passInput: String) {
         viewModelScope.launch {
@@ -44,15 +43,16 @@ class LoginViewModel(private val userRepository: UserRepository,
 
     class LoginViewModelFactory(
         private val repository: UserRepository,
-        private val userPreferences: UserPreferences // Thêm cái này
+        private val userPreferences: UserPreferences
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-                // Truyền cả repository và userPreferences vào ViewModel
                 return LoginViewModel(repository, userPreferences) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+
+
 }

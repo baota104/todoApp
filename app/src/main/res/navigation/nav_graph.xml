@@ -18,7 +18,10 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_dashBoardFragment"
-            app:destination="@id/dashBoardFragment" />
+            app:destination="@id/dashBoardFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            />
     </fragment>
 
     <fragment
@@ -36,7 +39,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.todoapp.ui.auth.LoginFragment"
+        android:name="com.example.todoapp.ui.auth.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login" >
         <action
@@ -53,7 +56,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.todoapp.ui.auth.RegisterFragment"
+        android:name="com.example.todoapp.ui.auth.register.RegisterFragment"
         android:label="RegisterFragment" >
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"

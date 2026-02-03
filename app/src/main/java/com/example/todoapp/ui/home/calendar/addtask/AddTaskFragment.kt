@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.home.calendar
+package com.example.todoapp.ui.home.calendar.addtask
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -15,11 +15,13 @@ import com.example.todoapp.R
 import com.example.todoapp.data.AppDatabase
 import com.example.todoapp.data.local.UserPreferences
 import com.example.todoapp.data.repository.CategoryRepository
+import com.example.todoapp.data.repository.SubTaskRepository
+import com.example.todoapp.data.repository.TaskRepository
 import com.example.todoapp.databinding.FragmentAddTaskBinding
 import com.example.todoapp.ui.adapter.CategoryAdapter
 import com.example.todoapp.ui.adapter.SubTaskCreateAdapter
-import com.example.todoapp.ui.viewmodel.CategoryViewModel
-import com.example.todoapp.ui.viewmodel.TaskViewModel
+import com.example.todoapp.ui.home.calendar.bottomcategory.AddCategoryBottomSheet
+import com.example.todoapp.ui.home.calendar.bottomcategory.CategoryViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,15 +35,13 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
     private val taskViewModel: TaskViewModel by viewModels {
         val db = AppDatabase.getDatabase(requireContext())
         val userPreferences = UserPreferences(requireContext())
-        TaskViewModel.Factory(db.taskDao(), db.subTaskDao(),userPreferences)
+        val taskRepository = TaskRepository(db.taskDao(),db.subTaskDao())
+        val subTaskRepository = SubTaskRepository(db.subTaskDao())
+        val categoryRepository = CategoryRepository(db.categoryDao())
+
+        TaskViewModel.Factory(taskRepository, subTaskRepository,categoryRepository,userPreferences)
     }
 
-    private val categoryViewModel: CategoryViewModel by activityViewModels {
-        val db = AppDatabase.getDatabase(requireContext())
-        val repository = CategoryRepository(db.categoryDao())
-        val userPreferences = UserPreferences(requireContext())
-        CategoryViewModel.CategoryViewModelFactory(repository,userPreferences)
-    }
 
     private var selectedStartDate: Long? = null
     private var selectedEndDate: Long? = null
@@ -56,7 +56,7 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         _binding = FragmentAddTaskBinding.bind(view)
         setupAdapters()
         setupInputs()
-        setupObservers()
+        observeViewModel()
     }
 
     private fun setupAdapters() {
@@ -131,32 +131,25 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         }
     }
 
-    private fun setupObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+    private fun observeViewModel() {
 
-                launch {
-                    categoryViewModel.categories.collect { list ->
-                        if (list.isEmpty()) {
-                            categoryViewModel.createDefaultsIfEmpty()
-                        }
-                        categoryAdapter.submitList(list)
-                    }
-                }
+        taskViewModel.categories.observe(viewLifecycleOwner) { categories ->
+            categoryAdapter.submitList(categories)
+        }
 
-                launch {
-                    taskViewModel.tempSubTasks.collect { list ->
-                        subTaskAdapter.submitList(list)
-                    }
-                }
 
-                launch {
-                    taskViewModel.taskEvent.collect { msg ->
-                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                        if (msg.contains("Success")) {
-                            findNavController().popBackStack() // Quay về
-                        }
-                    }
+        taskViewModel.tempSubTasks.observe(viewLifecycleOwner) { subTasks ->
+            subTaskAdapter.submitList(subTasks)
+        }
+
+
+        lifecycleScope.launch {
+            taskViewModel.taskEvent.collect { event ->
+                if (event == "Success") {
+                    Toast.makeText(context, "Task created successfully!", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                } else {
+                    Toast.makeText(context, event, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -166,7 +159,6 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         val calendar = Calendar.getInstance()
         DatePickerDialog(requireContext(), { _, year, month, day ->
             calendar.set(year, month, day)
-            // Định dạng ngày tháng đẹp (VD: Feb 21, 2024)
             val format = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
             onDateSelected(format.format(calendar.time), calendar.timeInMillis)
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
