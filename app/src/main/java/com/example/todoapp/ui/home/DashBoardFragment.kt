@@ -19,6 +19,30 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDashBoardBinding.bind(view)
         setupBottomNavigation()
+
+        // 1. Setup NavController Con (nav_dashboard)
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_dashboard) as NavHostFragment
+        val innerNavController = navHostFragment.navController
+
+        // ... setup BottomNavigation ...
+
+        // 2. KIỂM TRA "HÀNG" TỪ MAIN ACTIVITY GỬI SANG
+        arguments?.let { bundle ->
+            val taskId = bundle.getInt("DEEP_LINK_TASK_ID", -1)
+
+            if (taskId != -1) {
+                // Có ID -> Bảo NavCon mở màn Detail
+                val detailBundle = Bundle().apply {
+                    putInt("taskId", taskId) // Key này phải khớp với nav_dashboard.xml
+                }
+
+                innerNavController.navigate(R.id.action_global_taskDetailFragment, detailBundle)
+                // Hoặc action cụ thể: R.id.action_home_to_detail
+
+                // QUAN TRỌNG: Xóa ID đi để xoay màn hình nó không tự mở lại
+                bundle.remove("DEEP_LINK_TASK_ID")
+            }
+        }
     }
 
     private fun setupBottomNavigation() {

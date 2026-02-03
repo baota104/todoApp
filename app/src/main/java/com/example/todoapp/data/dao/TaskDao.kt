@@ -17,6 +17,9 @@ interface TaskDao {
     @Delete
     suspend fun deleteTask(task: Task)
 
+    @Query("SELECT * FROM tasks WHERE start_date > :currentTime AND is_completed = 0")
+    suspend fun getFutureTasks(currentTime: Long): List<Task>
+
 
     @Transaction
     @Query("SELECT * FROM tasks WHERE taskId = :taskId")

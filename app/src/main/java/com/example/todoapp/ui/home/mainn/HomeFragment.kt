@@ -62,6 +62,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             findNavController().navigate(action)
             Toast.makeText(context, "Open Detail: ${item.task.title}", Toast.LENGTH_SHORT).show()
         }
+        binding.ivNoti.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
+        }
 
         binding.rvPriorityTasks.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

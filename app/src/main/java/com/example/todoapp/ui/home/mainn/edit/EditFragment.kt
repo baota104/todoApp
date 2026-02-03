@@ -22,6 +22,7 @@ import com.example.todoapp.data.repository.TaskRepository
 import com.example.todoapp.databinding.FragmentEditBinding
 import com.example.todoapp.ui.adapter.CategoryAdapter
 import com.example.todoapp.ui.adapter.SubTaskCreateAdapter
+import com.example.todoapp.utils.AlarmScheduler
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -138,6 +139,7 @@ class EditFragment : Fragment() {
                     .setMessage("Are you sure you want to delete this task?")
                     .setPositiveButton("Delete") { _, _ ->
                         editViewModel.deleteTask(task)
+                        AlarmScheduler.cancelAlarm(requireContext(), task)
                     }
                     .setNegativeButton("Cancel", null)
                     .show()
@@ -145,6 +147,7 @@ class EditFragment : Fragment() {
         }
         binding.btnSave.setOnClickListener {
             saveTask()
+
         }
 
 
@@ -160,7 +163,7 @@ class EditFragment : Fragment() {
             Toast.makeText(context, "Please enter title", Toast.LENGTH_SHORT).show()
             return
         }
-
+//        val testTime = System.currentTimeMillis() + 60_000
         val updatedTask = currentTask.copy(
             title = title,
             description = description,
@@ -172,6 +175,9 @@ class EditFragment : Fragment() {
         )
 
         editViewModel.saveChanges(updatedTask, currentSubTasks)
+//        if (updatedTask.startDate != null) {
+//            AlarmScheduler.scheduleAlarm(requireContext(), updatedTask)
+//        }
     }
     private fun setupObserve(){
 

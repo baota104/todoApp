@@ -1,6 +1,7 @@
 package com.example.todoapp.ui.home.calendar.addtask
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -74,14 +75,14 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
     private fun setupInputs() {
 
         binding.tvStartDate.setOnClickListener {
-            showDatePicker { date, millis ->
+            showDateTimePicker { date, millis ->
                 binding.tvStartDate.text = date
                 selectedStartDate = millis
             }
         }
 
         binding.tvEndDate.setOnClickListener {
-            showDatePicker { date, millis ->
+            showDateTimePicker { date, millis ->
                 binding.tvEndDate.text = date
                 selectedEndDate = millis
             }
@@ -155,13 +156,38 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         }
     }
 
-    private fun showDatePicker(onDateSelected: (String, Long) -> Unit) {
+    // 3. Hàm mới: Chọn Ngày trước -> Sau đó chọn Giờ
+    private fun showDateTimePicker(onDateTimeSelected: (String, Long) -> Unit) {
         val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
+
+        // Bước 1: Hiện bảng chọn Ngày
         DatePickerDialog(requireContext(), { _, year, month, day ->
-            calendar.set(year, month, day)
-            val format = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-            onDateSelected(format.format(calendar.time), calendar.timeInMillis)
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+            // Sau khi user chọn ngày, lưu vào calendar
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+
+            // Bước 2: Hiện tiếp bảng chọn Giờ
+            TimePickerDialog(requireContext(), { _, hour, minute ->
+                // Sau khi user chọn giờ, lưu tiếp vào calendar
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0) // Reset giây về 0 cho đẹp
+
+                // Định dạng hiển thị bao gồm cả Giờ Phút
+                val format = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+
+                // Trả về kết quả
+                onDateTimeSelected(format.format(calendar.time), calendar.timeInMillis)
+
+            }, currentHour, currentMinute, true).show() // true = Định dạng 24h
+
+        }, currentYear, currentMonth, currentDay).show()
     }
 
     override fun onDestroyView() {

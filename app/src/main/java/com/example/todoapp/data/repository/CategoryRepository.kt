@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.example.todoapp.R
 import com.example.todoapp.data.dao.CategoryDao
 import com.example.todoapp.data.entity.Category
-import kotlinx.coroutines.flow.Flow
 
 class CategoryRepository(private val categoryDao: CategoryDao) {
 
