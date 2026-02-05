@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.data.AppDatabase
+import com.example.todoapp.data.entity.Task
 import com.example.todoapp.data.local.UserPreferences
 import com.example.todoapp.data.repository.CategoryRepository
 import com.example.todoapp.data.repository.SubTaskRepository
@@ -23,6 +24,7 @@ import com.example.todoapp.ui.adapter.CategoryAdapter
 import com.example.todoapp.ui.adapter.SubTaskCreateAdapter
 import com.example.todoapp.ui.home.calendar.bottomcategory.AddCategoryBottomSheet
 import com.example.todoapp.ui.home.calendar.bottomcategory.CategoryViewModel
+import com.example.todoapp.utils.AlarmScheduler
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,7 +42,7 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         val subTaskRepository = SubTaskRepository(db.subTaskDao())
         val categoryRepository = CategoryRepository(db.categoryDao())
 
-        TaskViewModel.Factory(taskRepository, subTaskRepository,categoryRepository,userPreferences)
+        TaskViewModel.Factory(taskRepository, subTaskRepository,categoryRepository,userPreferences,context = requireContext().applicationContext)
     }
 
 
@@ -121,6 +123,7 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
                 return@setOnClickListener
             }
 
+
             taskViewModel.createTask(
                 title = title,
                 desc = desc,
@@ -156,7 +159,6 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         }
     }
 
-    // 3. Hàm mới: Chọn Ngày trước -> Sau đó chọn Giờ
     private fun showDateTimePicker(onDateTimeSelected: (String, Long) -> Unit) {
         val calendar = Calendar.getInstance()
         val currentYear = calendar.get(Calendar.YEAR)
@@ -165,24 +167,20 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val currentMinute = calendar.get(Calendar.MINUTE)
 
-        // Bước 1: Hiện bảng chọn Ngày
+        // chon ngay
         DatePickerDialog(requireContext(), { _, year, month, day ->
-            // Sau khi user chọn ngày, lưu vào calendar
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.DAY_OF_MONTH, day)
 
-            // Bước 2: Hiện tiếp bảng chọn Giờ
+            // chon gio
             TimePickerDialog(requireContext(), { _, hour, minute ->
-                // Sau khi user chọn giờ, lưu tiếp vào calendar
                 calendar.set(Calendar.HOUR_OF_DAY, hour)
                 calendar.set(Calendar.MINUTE, minute)
-                calendar.set(Calendar.SECOND, 0) // Reset giây về 0 cho đẹp
+                calendar.set(Calendar.SECOND, 0)
 
-                // Định dạng hiển thị bao gồm cả Giờ Phút
                 val format = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
 
-                // Trả về kết quả
                 onDateTimeSelected(format.format(calendar.time), calendar.timeInMillis)
 
             }, currentHour, currentMinute, true).show() // true = Định dạng 24h

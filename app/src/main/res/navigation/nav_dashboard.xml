@@ -38,7 +38,14 @@
         android:id="@+id/profileFragment"
         android:name="com.example.todoapp.ui.home.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addTaskFragment"
         android:name="com.example.todoapp.ui.home.calendar.addtask.AddTaskFragment"
@@ -73,5 +80,13 @@
         android:name="com.example.todoapp.ui.home.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.todoapp.ui.home.profile.editProfile.EditProfileFragment"
+        android:label="EditProfileFragment" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.todoapp.ui.home.profile.changepass.ChangePasswordFragment"
+        android:label="ChangePasswordFragment" />
 
 </navigation>

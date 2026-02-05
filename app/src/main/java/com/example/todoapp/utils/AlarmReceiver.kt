@@ -20,30 +20,25 @@ import kotlinx.coroutines.launch
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        // 1. Nhận dữ liệu (Chấp nhận trường hợp chỉ có Title)
-        val taskTitle = intent.getStringExtra("TASK_TITLE") ?: "Công việc"
+        val taskTitle = intent.getStringExtra("TASK_TITLE") ?: "Task"
 
-        // Nếu không truyền ID, ta dùng mã băm của Title để tạo ra một số nguyên làm ID
-        // Điều này giúp các thông báo khác tiêu đề sẽ không đè lên nhau.
         val taskIdExtra = intent.getIntExtra("TASK_ID", -1)
         val notificationId = if (taskIdExtra != -1) taskIdExtra else taskTitle.hashCode()
 
-        val message = "Đã đến hạn làm việc: $taskTitle"
+        val message = "it is time to complete this task: $taskTitle"
         Log.d("AlarmReceiver", "Báo thức đã nổ! ID: $taskTitle - Title: $taskTitle")
-        // 2. Xử lý lưu vào Database (Chạy ngầm để không chặn UI)
+
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val db = AppDatabase.getDatabase(context)
 
-                // Tạo đối tượng thông báo để lưu lịch sử
                 val newNoti = Notification(
-                    title = "Nhắc nhở công việc",
+                    title = "task reminder",
                     message = message,
                     timestamp = System.currentTimeMillis(),
-                    type = 3 // Loại 3: Cảnh báo (Warning)
+                    type = 3 // warning
                 )
-
                 db.notificationDao().InsertNotification(newNoti)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -52,7 +47,6 @@ class AlarmReceiver : BroadcastReceiver() {
             }
         }
 
-        // 3. Hiển thị thông báo ra màn hình
         showNotification(context, notificationId, taskTitle, message)
     }
 
@@ -60,43 +54,43 @@ class AlarmReceiver : BroadcastReceiver() {
         val channelId = "todo_app_channel"
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Tạo Channel cho Android 8.0+
+        // Tạo Channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Nhắc nhở công việc",
+                "Todo App Channel",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Kênh thông báo cho các công việc đến hạn"
+                description = "Channel for Todo App"
             }
             notificationManager.createNotificationChannel(channel)
         }
 
-        // --- XỬ LÝ MỞ MÀN HÌNH KHÁC KHI CLICK ---
+        // xu li mo man hinh khac
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-            // Gửi tín hiệu để MainActivity biết cần mở màn nào
-            // Ví dụ: Muốn mở màn Detail thì gửi ID
+            // gửi tín hiệu để MainActivity biết cần mở màn nào
+            // ví dụ: Muốn mở màn Detail thì gửi ID
             putExtra("NAVIGATE_TO", "TASK_DETAIL")
             putExtra("TARGET_TASK_ID", notiId)
         }
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            notiId, // RequestCode khác nhau để không bị ghi đè Intent
+            notiId, // RequestCode khac nhau de khong ghi de intent
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         // Build Notification
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_notifications) // Đảm bảo bạn có icon này (trong suốt, màu trắng)
+            .setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent) // Gắn sự kiện click
-            .setAutoCancel(true) // Click xong tự biến mất
+            .setContentIntent(pendingIntent) // su kien click
+            .setAutoCancel(true) // click xong bien mat
 
         notificationManager.notify(notiId, builder.build())
     }

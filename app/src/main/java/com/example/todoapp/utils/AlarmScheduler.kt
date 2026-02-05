@@ -18,11 +18,9 @@ object AlarmScheduler {
 
         if (triggerTime <= System.currentTimeMillis()) return
 
-        // 2. [QUAN TRỌNG] Kiểm tra quyền trên Android 12+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!alarmManager.canScheduleExactAlarms()) {
                 Log.e("AlarmScheduler", "Chưa có quyền đặt báo thức chính xác!")
-                // Tùy chọn: Mở cài đặt để user cấp quyền hoặc dùng setWindow/setAndAllowWhileIdle thay thế
                 return
             }
         }
@@ -33,13 +31,13 @@ object AlarmScheduler {
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
-            context,
+            context.applicationContext,
             task.taskId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // 3. Đặt báo thức
+        // dat bao thuc
         try {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,

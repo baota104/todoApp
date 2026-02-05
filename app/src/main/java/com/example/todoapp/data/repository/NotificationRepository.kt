@@ -9,7 +9,13 @@ class NotificationRepository (private val notificationDao: NotificationDao) {
         notificationDao.InsertNotification(notification)
     }
 
+    suspend fun deleteNotification(notification: Notification) {
+        notificationDao.deleteNotification(notification)
+    }
+
+
     fun getAllNotifications(): LiveData<List<Notification>> {
         return notificationDao.getAllNotifications()
     }
+
 }

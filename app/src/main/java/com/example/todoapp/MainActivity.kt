@@ -14,7 +14,6 @@ import androidx.navigation.fragment.NavHostFragment
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 1. Kích hoạt chế độ tràn viền (Status bar trong suốt)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.nav_host_fragment)) { v, insets ->
@@ -26,16 +25,14 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-
-        // XỬ LÝ INTENT TỪ NOTIFICATION
         handleNotificationIntent(intent, navController)
 
     }
 
-    // Xử lý khi App đang chạy mà bấm thông báo (SingleTop)
+    // khi dang chay, bam thong bao
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        setIntent(intent) // Cập nhật intent mới nhất
+        setIntent(intent) // cap nhat intent moi
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -53,9 +50,6 @@ class MainActivity : AppCompatActivity() {
             val bundle = Bundle().apply {
                 putInt("DEEP_LINK_TASK_ID", taskId)
             }
-
-            // Điều hướng đến DashboardFragment (kèm gói hàng bundle)
-            // Lưu ý: R.id.dashboardFragment là ID trong nav_main.xml
             navController.navigate(R.id.dashBoardFragment, bundle)
         }
     }

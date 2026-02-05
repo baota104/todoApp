@@ -21,5 +21,6 @@ data class User(
     val profession: String? = null,
     val dateOfBirth: String? = null,
     val location: String? = null,
-    val salt: String
+    val salt: String,
+    val avatarPath: String? = null
 )

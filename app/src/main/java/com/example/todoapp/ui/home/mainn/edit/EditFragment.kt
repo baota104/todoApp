@@ -171,7 +171,6 @@ class EditFragment : Fragment() {
             endDate = selectedEndDate,
             priority = priority,
             catId = selectedCategoryId
-
         )
 
         editViewModel.saveChanges(updatedTask, currentSubTasks)

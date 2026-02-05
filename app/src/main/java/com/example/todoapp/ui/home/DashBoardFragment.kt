@@ -19,7 +19,11 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDashBoardBinding.bind(view)
         setupBottomNavigation()
+        setupMovetoNoti()
 
+    }
+
+    private fun setupMovetoNoti(){
         // 1. Setup NavController Con (nav_dashboard)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_dashboard) as NavHostFragment
         val innerNavController = navHostFragment.navController
@@ -37,9 +41,7 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
                 }
 
                 innerNavController.navigate(R.id.action_global_taskDetailFragment, detailBundle)
-                // Hoặc action cụ thể: R.id.action_home_to_detail
 
-                // QUAN TRỌNG: Xóa ID đi để xoay màn hình nó không tự mở lại
                 bundle.remove("DEEP_LINK_TASK_ID")
             }
         }

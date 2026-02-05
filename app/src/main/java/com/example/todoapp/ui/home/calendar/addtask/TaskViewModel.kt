@@ -1,5 +1,7 @@
 package com.example.todoapp.ui.home.calendar.addtask
 
+import android.content.Context
+import androidx.annotation.ContentView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData // <-- Dùng cái này
 import androidx.lifecycle.ViewModel
@@ -14,6 +16,7 @@ import com.example.todoapp.data.local.UserPreferences
 import com.example.todoapp.data.repository.CategoryRepository
 import com.example.todoapp.data.repository.SubTaskRepository
 import com.example.todoapp.data.repository.TaskRepository
+import com.example.todoapp.utils.AlarmScheduler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -22,7 +25,8 @@ class TaskViewModel(
     private val taskRepo: TaskRepository,
     private val subTaskRepo: SubTaskRepository,
     private val categoryRepository: CategoryRepository,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val context: Context
 ) : ViewModel() {
 
     private val _tempSubTasks = MutableLiveData<List<SubTask>>(emptyList())
@@ -81,6 +85,12 @@ class TaskViewModel(
                     subTaskRepo.insertSubTasks(subTasksToSave)
                 }
 
+                val savedTask = newTask.copy(taskId = newTaskId)
+
+                if (startDate != null && startDate > System.currentTimeMillis()) {
+                    AlarmScheduler.scheduleAlarm(context, savedTask)
+                }
+
                 _taskEvent.send("Success")
             } catch (e: Exception) {
                 _taskEvent.send("Error: ${e.message}")
@@ -92,12 +102,13 @@ class TaskViewModel(
         private val taskRepo: TaskRepository,
         private val subTaskRepo: SubTaskRepository,
         private val categoryRepository: CategoryRepository,
-        private val userPreferences: UserPreferences
+        private val userPreferences: UserPreferences,
+        private val context:Context
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
-            return TaskViewModel(taskRepo, subTaskRepo,categoryRepository, userPreferences) as T
+            return TaskViewModel(taskRepo, subTaskRepo,categoryRepository, userPreferences,context) as T
         }
     }
 }

@@ -57,7 +57,10 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
     private fun setupAdapters() {
         taskAdapter = CalendarTaskAdapter { task ->
             // detail
-            Toast.makeText(context, "Clicked: ${task.task.title}", Toast.LENGTH_SHORT).show()
+            val action = CalendarFragmentDirections.actionCalendarFragmentToTaskDetailFragment(task.task.taskId)
+            findNavController().navigate(action)
+
+
         }
 
         binding.rvTasks.apply {
