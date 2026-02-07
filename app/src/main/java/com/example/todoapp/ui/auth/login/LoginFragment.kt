@@ -44,6 +44,10 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val userPreferences = UserPreferences(requireContext())
+        if(userPreferences.isFirstTimeLaunch()){
+            userPreferences.setFirstTimeLaunchComplete()
+        }
         setupUI()
         setupObserve()
 

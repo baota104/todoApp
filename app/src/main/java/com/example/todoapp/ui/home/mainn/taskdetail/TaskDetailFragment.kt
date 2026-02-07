@@ -230,11 +230,11 @@ class TaskDetailFragment : Fragment() {
 
                 dialog.dismiss()
             }
-            .setNegativeButton("Không, chỉ việc nhỏ") { dialog, _ ->
+            .setNegativeButton("No, just subtasks") { dialog, _ ->
             taskDetailViewModel.updateSubTaskStatus(subTask, true)
             dialog.dismiss()
         }
-            .setNeutralButton("Hủy") { dialog, _ ->
+            .setNeutralButton("Cancel") { dialog, _ ->
                 subTaskAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }

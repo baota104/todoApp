@@ -163,6 +163,27 @@ class EditFragment : Fragment() {
             Toast.makeText(context, "Please enter title", Toast.LENGTH_SHORT).show()
             return
         }
+        if (selectedStartDate == null) {
+            Toast.makeText(context, "Please select a start date", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (selectedEndDate == null) {
+            Toast.makeText(context, "Please select an end date", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (selectedEndDate!! < selectedStartDate!!) {
+            Toast.makeText(context, "End date must be after start date", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (title.isEmpty()) {
+            Toast.makeText(context, "Title is required!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (selectedCategoryId == null) {
+            Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
+            return
+        }
 //        val testTime = System.currentTimeMillis() + 60_000
         val updatedTask = currentTask.copy(
             title = title,

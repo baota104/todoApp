@@ -64,6 +64,7 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
 
     private fun setupAdapters() {
         categoryAdapter = CategoryAdapter { category ->
+            android.util.Log.d("DEBUG_CATEGORY", "Đã chọn category: ${category.categoryId} - ${category.name}")
             selectedCategoryId = category.categoryId
         }
         binding.rvCategories.adapter = categoryAdapter
@@ -113,6 +114,18 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
             val title = binding.etTitle.text.toString().trim()
             val desc = binding.etDescription.text.toString().trim()
 
+            if (selectedStartDate == null) {
+                Toast.makeText(context, "Please select a start date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedEndDate == null) {
+                Toast.makeText(context, "Please select an end date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedEndDate!! < selectedStartDate!!) {
+                Toast.makeText(context, "End date must be after start date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             if (title.isEmpty()) {
                 Toast.makeText(context, "Title is required!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

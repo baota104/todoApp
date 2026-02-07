@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todoapp.R
 import com.example.todoapp.data.AppDatabase
 import com.example.todoapp.data.entity.TaskPopulated
+import com.example.todoapp.data.entity.User
 import com.example.todoapp.data.local.UserPreferences
 import com.example.todoapp.data.repository.CategoryRepository
 import com.example.todoapp.data.repository.TaskRepository
+import com.example.todoapp.data.repository.UserRepository
 import com.example.todoapp.databinding.FragmentHomeBinding
 import com.example.todoapp.ui.adapter.HomeUnimportantTaskAdapter
 import java.text.SimpleDateFormat
@@ -28,7 +30,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val userPreferences = UserPreferences(requireContext())
         val categoryRepository = CategoryRepository(db.categoryDao())
         val taskRepository = TaskRepository(db.taskDao(),db.subTaskDao())
-        HomeViewModel.Factory(categoryRepository,taskRepository,userPreferences)
+        val userRepository = UserRepository(db.userDao())
+        HomeViewModel.Factory(categoryRepository,taskRepository,userRepository,userPreferences)
     }
 
     private lateinit var priorityAdapter: HomeImportantTaskAdapter
@@ -43,16 +46,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         val userPrefs = UserPreferences(requireContext())
         homeViewModel.insertDefaultCategories()
-        setupHeader(userPrefs)
+        homeViewModel.getUser()
         setupRecyclerViews()
         setupObservers()
     }
 
 
-    private fun setupHeader(userPrefs: UserPreferences) {
+    private fun setupHeader(user: User) {
         val dateFormat = SimpleDateFormat("EEEE, MMM dd yyyy", Locale.ENGLISH)
         binding.tvDate.text = dateFormat.format(Date())
-        binding.tvWelcome.text = "Welcome baodeptrai!" // Nhớ thêm hàm getUserName vào UserPrefs nhé
+        binding.tvWelcome.text = "Welcome back, ${user.username}!" // Nhớ thêm hàm getUserName vào UserPrefs nhé
     }
 
     private fun setupRecyclerViews() {
@@ -108,6 +111,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 dailyAdapter.submitList(dailyList)
 
             }
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+           setupHeader(user)
+        }
     }
 
     override fun onDestroyView() {

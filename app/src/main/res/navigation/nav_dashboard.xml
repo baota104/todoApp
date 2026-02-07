@@ -8,6 +8,7 @@
     <action
         android:id="@+id/action_global_taskDetailFragment"
         app:destination="@id/taskDetailFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.todoapp.ui.home.mainn.HomeFragment"

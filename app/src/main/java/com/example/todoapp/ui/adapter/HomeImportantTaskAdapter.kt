@@ -31,8 +31,9 @@ class HomeImportantTaskAdapter(
         fun bind(item: TaskPopulated) {
             val task = item.task
             binding.tvTaskTitle.text = task.title
-            binding.ivIcon.setImageResource(item.category?.icon!!)
-            val colorResId = item.category.colorCode ?: R.color.card_red
+            val iconRes = item.category?.icon ?: R.drawable.ic_launcher_foreground
+            binding.ivIcon.setImageResource(iconRes)
+            val colorResId = item.category?.colorCode ?: R.color.card_red
             try {
                 val context = binding.root.context
                 val layerDrawable = binding.layoutContainer.background?.mutate() as? android.graphics.drawable.LayerDrawable
