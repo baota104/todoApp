@@ -8,14 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 
-// 1. Model dữ liệu
 data class OnboardingItem(
     val title: String,
     val description: String,
     val imageRes: Int
 )
 
-// 2. Adapter
 class OnboardingAdapter(private val items: List<OnboardingItem>) :
     RecyclerView.Adapter<OnboardingAdapter.OnboardingViewHolder>() {
 

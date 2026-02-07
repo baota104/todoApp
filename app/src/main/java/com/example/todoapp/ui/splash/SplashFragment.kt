@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.data.local.UserPreferences
@@ -18,10 +20,21 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
 
         Handler(Looper.getMainLooper()).postDelayed({
             if (isAdded) {
-                if (userPreferences.isLoggedIn()) {
-                    findNavController().navigate(R.id.action_splashFragment_to_dashBoardFragment)
-                } else {
-                    findNavController().navigate(R.id.action_splashFragment_to_onboardingFragment)
+                if(userPreferences.isFirstTimeLaunch()){
+                    val option = NavOptions.Builder()
+                        .setPopUpTo(R.id.splashFragment,true)
+                        .build()
+                    findNavController().navigate(R.id.action_splashFragment_to_onboardingFragment,null,option)
+                }
+                else {
+                    if (userPreferences.isLoggedIn()) {
+                        findNavController().navigate(R.id.action_splashFragment_to_dashBoardFragment)
+                    } else {
+                        val option = NavOptions.Builder()
+                            .setPopUpTo(R.id.splashFragment,true)
+                            .build()
+                        findNavController().navigate(R.id.action_splashFragment_to_loginFragment,null,option)
+                    }
                 }
             }
         }, 2000)

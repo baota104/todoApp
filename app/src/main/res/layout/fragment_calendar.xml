@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:backgroundTint="@color/primary_blue"
-        android:text="+ Add Task"
+        android:text="@string/add_task"
         android:textAllCaps="false"
         android:gravity="center"
         android:insetTop="0dp"

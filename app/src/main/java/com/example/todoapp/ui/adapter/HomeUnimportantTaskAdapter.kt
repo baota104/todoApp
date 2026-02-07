@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.data.entity.TaskWithCategory
+import com.example.todoapp.data.entity.TaskPopulated
 import com.example.todoapp.databinding.ItemDailyTaskBinding
 
 class HomeUnimportantTaskAdapter(
-    private val onTaskClick: (TaskWithCategory) -> Unit,
-    private val onTaskStatusChanged: (TaskWithCategory, Boolean) -> Unit // Callback check/uncheck
-) : ListAdapter<TaskWithCategory, HomeUnimportantTaskAdapter.DailyViewHolder>(TaskDiffCallback()) {
+    private val onTaskClick: (TaskPopulated) -> Unit,
+    private val onTaskStatusChanged: (TaskPopulated, Boolean) -> Unit // Callback check/uncheck
+) : ListAdapter<TaskPopulated, HomeUnimportantTaskAdapter.DailyViewHolder>(TaskDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyViewHolder {
         val binding = ItemDailyTaskBinding.inflate(
@@ -28,13 +28,10 @@ class HomeUnimportantTaskAdapter(
     inner class DailyViewHolder(private val binding: ItemDailyTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TaskWithCategory) {
+        fun bind(item: TaskPopulated) {
             val task = item.task
 
             binding.tvDailyTitle.text = task.title
-
-            // 1. Xử lý trạng thái Check (RadioButton)
-            // Gỡ listener trước khi set trạng thái để tránh trigger vô tận
             binding.rbStatus.setOnCheckedChangeListener(null)
             binding.rbStatus.isChecked = task.isCompleted
 
@@ -47,22 +44,19 @@ class HomeUnimportantTaskAdapter(
                 binding.tvDailyTitle.alpha = 1.0f
             }
 
-            // 3. Sự kiện Click vào RadioButton (Update Status)
             binding.rbStatus.setOnClickListener {
-                // Đảo ngược trạng thái hiện tại
                 val newStatus = !task.isCompleted
                 onTaskStatusChanged(item, newStatus)
             }
 
-            // 4. Sự kiện Click vào toàn bộ Card (Mở Detail)
             binding.root.setOnClickListener { onTaskClick(item) }
         }
     }
 
-    class TaskDiffCallback : DiffUtil.ItemCallback<TaskWithCategory>() {
-        override fun areItemsTheSame(oldItem: TaskWithCategory, newItem: TaskWithCategory) =
+    class TaskDiffCallback : DiffUtil.ItemCallback<TaskPopulated>() {
+        override fun areItemsTheSame(oldItem: TaskPopulated, newItem: TaskPopulated) =
             oldItem.task.taskId == newItem.task.taskId
-        override fun areContentsTheSame(oldItem: TaskWithCategory, newItem: TaskWithCategory) =
+        override fun areContentsTheSame(oldItem: TaskPopulated, newItem: TaskPopulated) =
             oldItem == newItem
     }
 }

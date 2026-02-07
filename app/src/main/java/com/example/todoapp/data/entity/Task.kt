@@ -19,10 +19,10 @@ import androidx.room.PrimaryKey
             entity = Category::class,
             parentColumns = ["categoryId"],
             childColumns = ["cat_id"],
-            onDelete = ForeignKey.SET_NULL // Xóa Category -> Task vẫn còn (nhưng mất nhãn)
+            onDelete = ForeignKey.SET_NULL // xoa cate -> task con nhung mat nhan
         )
     ],
-    indices = [Index("user_id"), Index("cat_id")] // Tăng tốc độ truy vấn
+    indices = [Index("user_id"), Index("cat_id")] // tang toc do truy van
 )
 data class Task(
     @PrimaryKey(autoGenerate = true)
@@ -32,24 +32,22 @@ data class Task(
     val description: String? = null,
 
     @ColumnInfo(name = "start_date")
-    val startDate: Long? = null, // Lưu timestamp
+    val startDate: Long? = null, //  timestamp
 
     @ColumnInfo(name = "end_date")
-    val endDate: Long? = null,   // Lưu timestamp
+    val endDate: Long? = null,   //  timestamp
 
     val priority: Int = 1,       // 1: Thấp, 2: Cao
 
     @ColumnInfo(name = "is_completed")
     var isCompleted: Boolean = false,
 
-    // Trường này khớp với thanh trượt trên giao diện Dashboard [cite: 42]
     @ColumnInfo(name = "progress_percent")
     val progressPercent: Int = 0,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis(),
 
-    // Khóa ngoại
     @ColumnInfo(name = "user_id") val userId: Int,
     @ColumnInfo(name = "cat_id") val catId: Int? = null
 )

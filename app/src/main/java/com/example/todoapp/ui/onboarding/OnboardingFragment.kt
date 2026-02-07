@@ -28,7 +28,10 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUi()
 
+    }
+    private fun setupUi(){
         val viewPager: ViewPager2 = binding.viewPager
         val btnNext: MaterialButton = binding.btnNext
         val tvSkip: TextView = binding.tvSkip
@@ -80,8 +83,6 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     }
 
     private fun navigateToLogin() {
-        // Điều hướng sang màn hình đăng nhập
-        // Đảm bảo bạn đã tạo action trong nav_graph.xml
         findNavController().navigate(R.id.action_onboardingFragment_to_loginFragment)
     }
 }

@@ -1,6 +1,7 @@
-package com.example.todoapp.ui.home.calendar
+package com.example.todoapp.ui.home.calendar.addtask
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,13 +14,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.data.AppDatabase
+import com.example.todoapp.data.entity.Task
 import com.example.todoapp.data.local.UserPreferences
 import com.example.todoapp.data.repository.CategoryRepository
+import com.example.todoapp.data.repository.SubTaskRepository
+import com.example.todoapp.data.repository.TaskRepository
 import com.example.todoapp.databinding.FragmentAddTaskBinding
 import com.example.todoapp.ui.adapter.CategoryAdapter
 import com.example.todoapp.ui.adapter.SubTaskCreateAdapter
-import com.example.todoapp.ui.viewmodel.CategoryViewModel
-import com.example.todoapp.ui.viewmodel.TaskViewModel
+import com.example.todoapp.ui.home.calendar.bottomcategory.AddCategoryBottomSheet
+import com.example.todoapp.ui.home.calendar.bottomcategory.CategoryViewModel
+import com.example.todoapp.utils.AlarmScheduler
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,15 +38,13 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
     private val taskViewModel: TaskViewModel by viewModels {
         val db = AppDatabase.getDatabase(requireContext())
         val userPreferences = UserPreferences(requireContext())
-        TaskViewModel.Factory(db.taskDao(), db.subTaskDao(),userPreferences)
+        val taskRepository = TaskRepository(db.taskDao(),db.subTaskDao())
+        val subTaskRepository = SubTaskRepository(db.subTaskDao())
+        val categoryRepository = CategoryRepository(db.categoryDao())
+
+        TaskViewModel.Factory(taskRepository, subTaskRepository,categoryRepository,userPreferences,context = requireContext().applicationContext)
     }
 
-    private val categoryViewModel: CategoryViewModel by activityViewModels {
-        val db = AppDatabase.getDatabase(requireContext())
-        val repository = CategoryRepository(db.categoryDao())
-        val userPreferences = UserPreferences(requireContext())
-        CategoryViewModel.CategoryViewModelFactory(repository,userPreferences)
-    }
 
     private var selectedStartDate: Long? = null
     private var selectedEndDate: Long? = null
@@ -56,11 +59,12 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         _binding = FragmentAddTaskBinding.bind(view)
         setupAdapters()
         setupInputs()
-        setupObservers()
+        observeViewModel()
     }
 
     private fun setupAdapters() {
         categoryAdapter = CategoryAdapter { category ->
+            android.util.Log.d("DEBUG_CATEGORY", "Đã chọn category: ${category.categoryId} - ${category.name}")
             selectedCategoryId = category.categoryId
         }
         binding.rvCategories.adapter = categoryAdapter
@@ -74,14 +78,14 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
     private fun setupInputs() {
 
         binding.tvStartDate.setOnClickListener {
-            showDatePicker { date, millis ->
+            showDateTimePicker { date, millis ->
                 binding.tvStartDate.text = date
                 selectedStartDate = millis
             }
         }
 
         binding.tvEndDate.setOnClickListener {
-            showDatePicker { date, millis ->
+            showDateTimePicker { date, millis ->
                 binding.tvEndDate.text = date
                 selectedEndDate = millis
             }
@@ -110,6 +114,18 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
             val title = binding.etTitle.text.toString().trim()
             val desc = binding.etDescription.text.toString().trim()
 
+            if (selectedStartDate == null) {
+                Toast.makeText(context, "Please select a start date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedEndDate == null) {
+                Toast.makeText(context, "Please select an end date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedEndDate!! < selectedStartDate!!) {
+                Toast.makeText(context, "End date must be after start date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             if (title.isEmpty()) {
                 Toast.makeText(context, "Title is required!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -119,6 +135,7 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
                 Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
 
             taskViewModel.createTask(
                 title = title,
@@ -131,45 +148,57 @@ class AddTaskFragment : Fragment(R.layout.fragment_add_task) {
         }
     }
 
-    private fun setupObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+    private fun observeViewModel() {
 
-                launch {
-                    categoryViewModel.categories.collect { list ->
-                        if (list.isEmpty()) {
-                            categoryViewModel.createDefaultsIfEmpty()
-                        }
-                        categoryAdapter.submitList(list)
-                    }
-                }
+        taskViewModel.categories.observe(viewLifecycleOwner) { categories ->
+            categoryAdapter.submitList(categories)
+        }
 
-                launch {
-                    taskViewModel.tempSubTasks.collect { list ->
-                        subTaskAdapter.submitList(list)
-                    }
-                }
 
-                launch {
-                    taskViewModel.taskEvent.collect { msg ->
-                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                        if (msg.contains("Success")) {
-                            findNavController().popBackStack() // Quay về
-                        }
-                    }
+        taskViewModel.tempSubTasks.observe(viewLifecycleOwner) { subTasks ->
+            subTaskAdapter.submitList(subTasks)
+        }
+
+
+        lifecycleScope.launch {
+            taskViewModel.taskEvent.collect { event ->
+                if (event == "Success") {
+                    Toast.makeText(context, "Task created successfully!", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                } else {
+                    Toast.makeText(context, event, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    private fun showDatePicker(onDateSelected: (String, Long) -> Unit) {
+    private fun showDateTimePicker(onDateTimeSelected: (String, Long) -> Unit) {
         val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
+
+        // chon ngay
         DatePickerDialog(requireContext(), { _, year, month, day ->
-            calendar.set(year, month, day)
-            // Định dạng ngày tháng đẹp (VD: Feb 21, 2024)
-            val format = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-            onDateSelected(format.format(calendar.time), calendar.timeInMillis)
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+
+            // chon gio
+            TimePickerDialog(requireContext(), { _, hour, minute ->
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0)
+
+                val format = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+
+                onDateTimeSelected(format.format(calendar.time), calendar.timeInMillis)
+
+            }, currentHour, currentMinute, true).show() // true = Định dạng 24h
+
+        }, currentYear, currentMonth, currentDay).show()
     }
 
     override fun onDestroyView() {

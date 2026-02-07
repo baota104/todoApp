@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="160dp"
     android:layout_height="200dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/primary_blue"
+    app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="24dp"
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/bg_priority_card_pattern"
         android:padding="16dp">
 
         <TextView
@@ -26,16 +29,32 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_home"
+            app:tint="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTaskTitle"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTaskTitle" />
+
         <TextView
             android:id="@+id/tvTaskTitle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="UI Design"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:textStyle="bold"
+            android:layout_marginStart="10dp"
             app:layout_constraintBottom_toTopOf="@+id/tvProgressLabel"
-            app:layout_constraintTop_toBottomOf="@+id/tvDaysLeft" />
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toEndOf="@+id/ivIcon"
+            app:layout_constraintTop_toBottomOf="@+id/tvDaysLeft"
+            app:layout_constraintVertical_bias="0.6" />
 
         <TextView
             android:id="@+id/tvProgressLabel"
@@ -60,6 +79,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvPercent"
             app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
             android:id="@+id/tvPercent"
             android:layout_width="wrap_content"

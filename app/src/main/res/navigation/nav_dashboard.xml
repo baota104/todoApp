@@ -5,30 +5,89 @@
     android:id="@+id/nav_dashboard"
     app:startDestination="@id/homeFragment">
 
+    <action
+        android:id="@+id/action_global_taskDetailFragment"
+        app:destination="@id/taskDetailFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.todoapp.ui.home.mainn.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/calendarFragment"
-        android:name="com.example.todoapp.ui.home.calendar.CalendarFragment"
+        android:name="com.example.todoapp.ui.home.calendar.calendarfrag.CalendarFragment"
         android:label="Calendar"
         tools:layout="@layout/fragment_calendar" >
         <action
             android:id="@+id/action_calendarFragment_to_addTaskFragment"
             app:destination="@id/addTaskFragment" />
+        <action
+            android:id="@+id/action_calendarFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.todoapp.ui.home.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addTaskFragment"
-        android:name="com.example.todoapp.ui.home.calendar.AddTaskFragment"
+        android:name="com.example.todoapp.ui.home.calendar.addtask.AddTaskFragment"
         android:label="AddTaskFragment" />
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.example.todoapp.ui.home.mainn.taskdetail.TaskDetailFragment"
+        android:label="TaskDetailFragment" >
+        <argument
+            android:name="taskId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <action
+            android:id="@+id/action_taskDetailFragment_to_editFragment"
+            app:destination="@id/editFragment" />
+    </fragment>
+    <argument
+        android:name="taskid"
+        app:argType="integer"
+        android:defaultValue="-1" />
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.example.todoapp.ui.home.mainn.edit.EditFragment"
+        android:label="EditFragment" >
+        <argument
+            android:name="taskid"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.todoapp.ui.home.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.todoapp.ui.home.profile.editProfile.EditProfileFragment"
+        android:label="EditProfileFragment" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.todoapp.ui.home.profile.changepass.ChangePasswordFragment"
+        android:label="ChangePasswordFragment" />
 
 </navigation>
